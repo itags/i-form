@@ -1,0 +1,160 @@
+/* ======================================================================= */
+/* ======================================================================= */
+/* ======================================================================= */
+/* Definition of itag shadow-css is done by defining a `dummy` css-rule    */
+/* for the dummy-element: `itag-css` --> its property (also dummy) `i-tag` /*
+/* will define which itag will be css-shadowed                             /*
+/* ======================================================================= */
+itag-css {
+    i-tag: i-select;  /* set the property-value to the proper itag */
+}
+/* ======================================================================= */
+/* ======================================================================= */
+/* ======================================================================= */
+
+
+/* =================================== */
+/* set invisiblity when not rendered   */
+/* =================================== */
+i-form:not(.itag-rendered) {
+    /* don't set visibility to hidden --> you cannot set a focus on those items */
+    opacity: 0 !important;
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    z-index: -1;
+}
+
+i-form:not(.itag-rendered) * {
+    opacity: 0 !important;
+}
+/* ================================= */
+
+/*!
+ * Most styles are from Pure v0.5.0
+ * Licensed under the BSD License.
+*/
+
+i-form label {
+    margin: 0.5em 0 0.2em;
+}
+i-form fieldset {
+    margin: 0;
+    padding: 0.35em 0 0.75em;
+    border: 0;
+}
+i-form legend {
+    display: block;
+    width: 100%;
+    padding: 0.3em 0;
+    margin-bottom: 0.3em;
+    color: #333;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+i-form.i-stacked [itag-formelement="true"]:not(i-button) {
+    display: block;
+    margin: 0.25em 0;
+}
+
+i-form.i-aligned [itag-formelement="true"] {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+    vertical-align: middle;
+}
+
+/* Aligned Forms */
+i-form.i-aligned .i-group {
+    margin-bottom: 0.5em;
+}
+i-form.i-aligned .i-group label {
+    text-align: right;
+    display: inline-block;
+    vertical-align: middle;
+    width: 10em;
+    margin: 0 1em 0 0;
+}
+i-form.i-aligned .i-controls {
+    margin: 1.5em 0 0 10em;
+}
+
+/* Grouped Inputs */
+i-form .i-group fieldset {
+    margin-bottom: 10px;
+}
+i-form .i-group i-input {
+    display: block;
+    margin: 0;
+    border-radius: 0;
+    position: relative;
+    top: -1px;
+}
+i-form .i-group i-input.focussed input,
+i-form .i-group i-input input:focus {
+    z-index: 2;
+}
+i-form .i-group i-input:first-child input {
+    top: 1px;
+    border-radius: 4px 4px 0 0;
+}
+i-form .i-group i-input:last-child input {
+    top: -2px;
+    border-radius: 0 0 4px 4px;
+}
+i-form .i-group i-button,
+i-form .i-group i-select {
+    margin: 0.35em 0;
+}
+
+/* Inline help for forms */
+/* NOTE: pure-help-inline is deprecated. Use i-form-message-inline instead. */
+i-form .message-inline {
+    display: inline-block;
+    padding-left: 0.3em;
+    color: #666;
+    vertical-align: middle;
+    font-size: 0.875em;
+}
+
+/* Block help for forms */
+i-form .message {
+    display: block;
+    color: #666;
+    font-size: 0.875em;
+}
+
+@media only screen and (max-width : 480px) {
+    i-form i-button:last-child {
+        margin: 0.7em 0 0;
+    }
+
+    i-form i-input,
+    i-form label {
+        margin-bottom: 0.3em;
+        display: block;
+    }
+
+    i-form .i-group i-input {
+        margin-bottom: 0;
+    }
+
+    i-form .i-aligned .i-group label {
+        margin-bottom: 0.3em;
+        text-align: left;
+        display: block;
+        width: 100%;
+    }
+
+    i-form .i-aligned .i-controls {
+        margin: 1.5em 0 0 0;
+    }
+
+    i-form .message-inline,
+    i-form .message {
+        display: block;
+        font-size: 0.75em;
+        /* Increased bottom padding to make it group with its related input element. */
+        padding: 0.2em 0 0.8em;
+    }
+}

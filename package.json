@@ -33,9 +33,7 @@
     },
     "dependencies": {
         "polyfill": "itsa/polyfill",
-        "event-dom": "itsa/event-dom",
-        "js-ext": "itsa/js-ext",
-        "css": "itsa/css",
+        "focusmanager": "itsa/focusmanager",
         "itags.core": "itags/core"
     },
     "devDependencies": {
