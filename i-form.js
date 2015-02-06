@@ -17,7 +17,8 @@ module.exports = function (window) {
         Itag = DOCUMENT.createItag(itagName, {
 
             init: function() {
-                var element = this;
+                var element = this,
+                    allFormElements, children;
                 if (!element.isPlugged(FocusManagerPlugin)) {
                     element.plug(
                         FocusManagerPlugin,
@@ -29,6 +30,26 @@ module.exports = function (window) {
                     );
                 }
                 element.databinders = [];
+                // we must add a classname to the i-form and remove it when all
+                // i-form-elements are ready. This we need to prevent the i-form-elements
+                // to show some initial value before they are bounded
+                // now we add all i-form-elements that need to wait for bounded data to a hash
+                allFormElements = element.getAll('[itag-formelement="true"][prop]');
+                if (allFormElements.length>0) {
+                    element.addClass('hide-children');
+                    children = [];
+                    allFormElements.forEach(function(formElement) {
+                        // first tell the element it needs to wait for data:
+                        formElement.setAttr('bound-model', 'true');
+                        // now add the readypromise to the hash:
+                        children[children.length] = formElement.itagReady();
+                    });
+                    window.Promise.finishAll(children).then(
+                        function() {
+                            element.removeClass('hide-children');
+                        }
+                    );
+                }
             },
 
             defFmSelector: function() {
@@ -52,14 +73,15 @@ module.exports = function (window) {
                 var element = this,
                     databinders = element.databinders,
                     model = element.model,
-                    allFormElements;
+                    allFormElements, propertyModel;
                 element.setAttr('fm-manage', element.defFmSelector(), true);
                 element.unbind();
-                allFormElements = element.getAll('[itag-formelement="true"]');
+                allFormElements = element.getAll('[itag-formelement="true"][prop]');
                 allFormElements.forEach(function(formElement) {
                     var property = formElement.model.prop;
                     if (property) {
-                        databinders[databinders.length] = element.bindModel(model[property], formElement, true);
+                        propertyModel = model[property];
+                        propertyModel && (databinders[databinders.length] = element.bindModel(propertyModel, formElement, true));
                     }
                 });
             },
