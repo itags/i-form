@@ -32,14 +32,24 @@ i-form:not(.itag-rendered) {
  * Licensed under the BSD License.
 */
 
+i-form {
+    margin: 0;
+    display: inline-block;
+    *display: inline; /*IE 6/7*/
+    zoom: 1;
+    padding: 0.25em 0.5em;
+}
+
 i-form label {
     margin: 0.5em 0 0.2em;
 }
+
 i-form fieldset {
     margin: 0;
     padding: 0.35em 0 0.75em;
     border: 0;
 }
+
 i-form legend {
     display: block;
     width: 100%;

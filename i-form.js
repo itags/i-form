@@ -10,14 +10,40 @@ module.exports = function (window) {
         FocusManagerPlugin = require('focusmanager')(window),
         DEFAULT_KEYUP = 'shift+9',
         DEFAULT_KEYDOWN = '9',
+        DEFAULT_SELECTOR = '[itag-formelement]',
         DEFAULT_LOOP = true,
-        Itag;
+        Event, Itag, getFocusManagerSelector;
 
     if (!window.ITAGS[itagName]) {
+        Event = require('event-mobile')(window);
+
+        getFocusManagerSelector = function(focusContainerNode) {
+            var selector = focusContainerNode.getAttr('fm-manage');
+            (selector.toLowerCase()==='true') && (selector=DEFAULT_SELECTOR);
+            return selector;
+        };
+
+        Event.before(itagName+':manualfocus', function(e) {
+            // the i-select itself is unfocussable, but its button is
+            // we need to patch `manualfocus`,
+            // which is emitted on node.focus()
+            // a focus by userinteraction will always appear on the button itself
+            // so we don't bother that
+            var element = e.target;
+            e.preventDefault();
+            element.itagReady().then(
+                function() {
+                    var focusNode = element.getElement(getFocusManagerSelector(element));
+                    focusNode && focusNode.focus();
+                }
+            );
+        });
+
         Itag = DOCUMENT.createItag(itagName, {
 
             init: function() {
                 var element = this,
+                    designNode = element.getDesignNode(),
                     allFormElements, children;
                 if (!element.isPlugged(FocusManagerPlugin)) {
                     element.plug(
@@ -34,15 +60,17 @@ module.exports = function (window) {
                 // i-form-elements are ready. This we need to prevent the i-form-elements
                 // to show some initial value before they are bounded
                 // now we add all i-form-elements that need to wait for bounded data to a hash
-                allFormElements = element.getAll('[itag-formelement="true"][prop]');
+                allFormElements = designNode.getAll('[i-prop]');
                 if (allFormElements.length>0) {
-                    element.addClass('hide-children');
+                    element.setClass('hide-children');
                     children = [];
                     allFormElements.forEach(function(formElement) {
                         // first tell the element it needs to wait for data:
                         formElement.setAttr('bound-model', 'true');
                         // now add the readypromise to the hash:
-                        children[children.length] = formElement.itagReady();
+                        formElement._showItagPromise = window.Promise.manage();
+                        children[children.length] = formElement._showItagPromise;
+                        formElement.itagReady().then(formElement._showItagPromise.fulfill());
                     });
                     window.Promise.finishAll(children).then(
                         function() {
@@ -50,11 +78,12 @@ module.exports = function (window) {
                         }
                     );
                 }
+                // fully set the designNode's content into the i-form:
+                element.setHTML(designNode.getHTML());
             },
 
             defFmSelector: function() {
-                return "[itag-formelement]";
-                // return "[itag-formelement='true']";
+                return DEFAULT_SELECTOR;
             },
 
             defFmKeyup: function() {
@@ -76,12 +105,18 @@ module.exports = function (window) {
                     allFormElements, propertyModel;
                 element.setAttr('fm-manage', element.defFmSelector(), true);
                 element.unbind();
-                allFormElements = element.getAll('[itag-formelement="true"][prop]');
+                allFormElements = element.getAll('[i-prop]');
                 allFormElements.forEach(function(formElement) {
-                    var property = formElement.model.prop;
+                    var property = formElement.getAttr('i-prop');
                     if (property) {
                         propertyModel = model[property];
-                        propertyModel && (databinders[databinders.length] = element.bindModel(propertyModel, formElement, true));
+                        if (propertyModel) {
+                            databinders[databinders.length] = element.bindModel(propertyModel, formElement, true);
+                        }
+                        else {
+                            // fulfill the promise from the hash, to make the hash completely fulfilled and the i-form to show:
+                            formElement._showItagPromise.fulfill();
+                        }
                     }
                 });
             },
