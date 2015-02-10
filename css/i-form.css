@@ -72,10 +72,10 @@ i-form.i-aligned [itag-formelement="true"] {
 }
 
 /* Aligned Forms */
-i-form.i-aligned i-formrow {
+i-form.i-aligned div.i-formrow {
     margin-bottom: 0.5em;
 }
-i-form.i-aligned i-formrow label {
+i-form.i-aligned div.i-formrow label {
     text-align: right;
     display: inline-block;
     vertical-align: middle;
@@ -87,30 +87,30 @@ i-form.i-aligned .i-controls {
 }
 
 /* Grouped Inputs */
-i-form i-formrow fieldset {
+i-form div.i-formrow fieldset {
     margin-bottom: 10px;
 }
-i-form i-formrow i-input {
+i-form div.i-formrow i-input {
     display: block;
     margin: 0;
     border-radius: 0;
     position: relative;
     top: -1px;
 }
-i-form i-formrow i-input.focussed input,
-i-form i-formrow i-input input:focus {
+i-form div.i-formrow i-input.focussed input,
+i-form div.i-formrow i-input input:focus {
     z-index: 2;
 }
-i-form i-formrow i-input:first-child input {
+i-form div.i-formrow i-input:first-child input {
     top: 1px;
     border-radius: 4px 4px 0 0;
 }
-i-form i-formrow i-input:last-child input {
+i-form div.i-formrow i-input:last-child input {
     top: -2px;
     border-radius: 0 0 4px 4px;
 }
-i-form i-formrow i-button,
-i-form i-formrow i-select {
+i-form div.i-formrow i-button,
+i-form div.i-formrow i-select {
     margin: 0.35em 0;
 }
 
@@ -142,18 +142,18 @@ i-form .message {
         display: block;
     }
 
-    i-form i-formrow i-input {
+    i-form div.i-formrow i-input {
         margin-bottom: 0;
     }
 
-    i-form .i-aligned i-formrow label {
+    i-form.i-aligned div.i-formrow label {
         margin-bottom: 0.3em;
         text-align: left;
         display: block;
         width: 100%;
     }
 
-    i-form .i-aligned .i-controls {
+    i-form.i-aligned .i-controls {
         margin: 1.5em 0 0 0;
     }
 

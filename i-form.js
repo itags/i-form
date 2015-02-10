@@ -4,7 +4,8 @@ module.exports = function (window) {
     require('polyfill/polyfill-base.js');
     require('./css/i-form.css');
 
-    var itagName = 'i-form', // <-- define your own itag-name here
+    var NAME = '[i-form]: ',
+        itagName = 'i-form', // <-- define your own itag-name here
         DOCUMENT = window.document,
         itagCore = require('itags.core')(window),
         FocusManagerPlugin = require('focusmanager')(window),
@@ -60,7 +61,11 @@ module.exports = function (window) {
                 // i-form-elements are ready. This we need to prevent the i-form-elements
                 // to show some initial value before they are bounded
                 // now we add all i-form-elements that need to wait for bounded data to a hash
-                allFormElements = designNode.getAll('[i-prop]');
+
+                // fully set the designNode's content into the i-form:
+                element.setHTML(designNode.getHTML());
+
+                allFormElements = element.getAll('[i-prop]');
                 if (allFormElements.length>0) {
                     element.setClass('hide-children');
                     children = [];
@@ -78,8 +83,6 @@ module.exports = function (window) {
                         }
                     );
                 }
-                // fully set the designNode's content into the i-form:
-                element.setHTML(designNode.getHTML());
             },
 
             defFmSelector: function() {
@@ -115,7 +118,8 @@ module.exports = function (window) {
                         }
                         else {
                             // fulfill the promise from the hash, to make the hash completely fulfilled and the i-form to show:
-                            formElement._showItagPromise.fulfill();
+                            formElement._showItagPromise && formElement._showItagPromise.fulfill();
+                            console.warn(NAME+'Form-element waits for prop: '+property+', but this property is not boud. Will show the form, but not this element.');
                         }
                     }
                 });
