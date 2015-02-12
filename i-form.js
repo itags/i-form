@@ -13,16 +13,10 @@ module.exports = function (window) {
         DEFAULT_KEYDOWN = '9',
         DEFAULT_SELECTOR = '[itag-formelement]',
         DEFAULT_LOOP = true,
-        Event, Itag, getFocusManagerSelector;
+        Event, Itag;
 
     if (!window.ITAGS[itagName]) {
         Event = require('event-mobile')(window);
-
-        getFocusManagerSelector = function(focusContainerNode) {
-            var selector = focusContainerNode.getAttr('fm-manage');
-            (selector.toLowerCase()==='true') && (selector=DEFAULT_SELECTOR);
-            return selector;
-        };
 
         Event.before(itagName+':manualfocus', function(e) {
             // the i-select itself is unfocussable, but its button is
@@ -34,18 +28,23 @@ module.exports = function (window) {
             e.preventDefault();
             element.itagReady().then(
                 function() {
-                    var focusNode = element.getElement(getFocusManagerSelector(element));
+                    var selector = element.getFocusManagerSelector(),
+                        focusNode = element.getElement(selector);
                     focusNode && focusNode.focus();
                 }
             );
         });
 
         Itag = DOCUMENT.createItag(itagName, {
+            attrs: {
+                'active-labels': 'boolean'
+            },
 
             init: function() {
                 var element = this,
                     designNode = element.getDesignNode(),
                     allFormElements, children;
+
                 if (!element.isPlugged(FocusManagerPlugin)) {
                     element.plug(
                         FocusManagerPlugin,
@@ -64,14 +63,13 @@ module.exports = function (window) {
 
                 // fully set the designNode's content into the i-form:
                 element.setHTML(designNode.getHTML());
-
-                allFormElements = element.getAll('[i-prop]');
+                allFormElements = element.getAll('[i-prop], i-label');
                 if (allFormElements.length>0) {
                     element.setClass('hide-children');
                     children = [];
                     allFormElements.forEach(function(formElement) {
                         // first tell the element it needs to wait for data:
-                        formElement.setAttr('bound-model', 'true');
+                        formElement.hasAttribute('i-prop') && formElement.setAttr('bound-model', 'true');
                         // now add the readypromise to the hash:
                         formElement._showItagPromise = window.Promise.manage();
                         children[children.length] = formElement._showItagPromise;
@@ -83,6 +81,12 @@ module.exports = function (window) {
                         }
                     );
                 }
+            },
+
+            getFocusManagerSelector: function() {
+                var selector = this.getAttr('fm-manage');
+                (selector.toLowerCase()==='true') && (selector=DEFAULT_SELECTOR);
+                return selector;
             },
 
             defFmSelector: function() {
@@ -114,12 +118,12 @@ module.exports = function (window) {
                     if (property) {
                         propertyModel = model[property];
                         if (propertyModel) {
-                            databinders[databinders.length] = element.bindModel(propertyModel, formElement, true);
+                            databinders[databinders.length] = formElement.bindModel(propertyModel);
                         }
                         else {
                             // fulfill the promise from the hash, to make the hash completely fulfilled and the i-form to show:
                             formElement._showItagPromise && formElement._showItagPromise.fulfill();
-                            console.warn(NAME+'Form-element waits for prop: '+property+', but this property is not boud. Will show the form, but not this element.');
+                            console.warn(NAME+'Form-element waits for prop: '+property+', but this property is not bound. Will show the form, but not this element.');
                         }
                     }
                 });

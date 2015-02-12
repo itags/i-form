@@ -40,8 +40,8 @@ i-form {
     padding: 0.25em 0.5em;
 }
 
-i-form label {
-    margin: 0.5em 0 0.2em;
+i-form[active-labels="true"] i-label {
+    cursor: default;
 }
 
 i-form fieldset {
@@ -75,7 +75,10 @@ i-form.i-aligned [itag-formelement="true"] {
 i-form.i-aligned div.i-formrow {
     margin-bottom: 0.5em;
 }
-i-form.i-aligned div.i-formrow label {
+i-form.i-aligned div.i-formrow:last-child {
+    margin-bottom: 0;
+}
+i-form.i-aligned div.i-formrow i-label {
     text-align: right;
     display: inline-block;
     vertical-align: middle;
@@ -101,11 +104,11 @@ i-form div.i-formrow i-input.focussed input,
 i-form div.i-formrow i-input input:focus {
     z-index: 2;
 }
-i-form div.i-formrow i-input:first-child input {
+i-form fieldset.i-group div.i-formrow:first-child i-input input {
     top: 1px;
     border-radius: 4px 4px 0 0;
 }
-i-form div.i-formrow i-input:last-child input {
+i-form fieldset.i-group div.i-formrow:last-child i-input input {
     top: -2px;
     border-radius: 0 0 4px 4px;
 }
@@ -137,7 +140,7 @@ i-form .message {
     }
 
     i-form i-input,
-    i-form label {
+    i-form i-label {
         margin-bottom: 0.3em;
         display: block;
     }
@@ -146,7 +149,7 @@ i-form .message {
         margin-bottom: 0;
     }
 
-    i-form.i-aligned div.i-formrow label {
+    i-form.i-aligned div.i-formrow i-label {
         margin-bottom: 0.3em;
         text-align: left;
         display: block;
