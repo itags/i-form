@@ -25,6 +25,9 @@
         "form"
     ],
     "main": "i-form.js",
+    "directories": {
+        "css": "./css"
+    },
     "browserify": {
         "transform": ["cssify"]
     },
@@ -32,8 +35,6 @@
         "node": "*"
     },
     "dependencies": {
-        "polyfill": "itsa/polyfill",
-        "focusmanager": "itsa/focusmanager",
         "itags.core": "itags/core"
     },
     "devDependencies": {

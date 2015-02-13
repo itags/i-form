@@ -46,79 +46,156 @@ i-form[active-labels="true"] i-label {
 
 i-form fieldset {
     margin: 0;
-    padding: 0.35em 0 0.75em;
+    padding: 0.5em 0 0.75em;
     border: 0;
+}
+
+i-form fieldset i-button {
+    margin-top: 0.75em;
+    margin-right: 0.25em;
 }
 
 i-form legend {
     display: block;
     width: 100%;
     padding: 0.3em 0;
-    margin-bottom: 0.3em;
+    margin-bottom: 1em;
     color: #333;
     border-bottom: 1px solid #e5e5e5;
 }
 
+i-form div.i-formrow {
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+    *display: inline; /*IE 6/7*/
+    zoom: 1;
+}
+
+/* ======================================================== */
+/* Grouped Inputs */
+i-form.i-group fieldset,
+i-form .i-group fieldset {
+    margin-bottom: 0.6em;
+}
+i-form.i-group:not(.i-aligned) i-label,
+i-form:not(.i-aligned) .i-group i-label {
+    opacity: 0 !important;
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    z-index: -1;
+}
+i-form.i-group [itag-formelement="true"]:not(i-button),
+i-form .i-group [itag-formelement="true"]:not(i-button) {
+    display: block;
+}
+i-form.i-group i-input input,
+i-form .i-group i-input input {
+    border-radius: 0;
+    position: relative;
+    top: -1px;
+}
+i-form.i-group div.i-formrow:first-child i-input input,
+i-form .i-group div.i-formrow:first-child i-input input {
+    top: 1px;
+    border-radius: 4px 4px 0 0;
+}
+i-form.i-group div.i-formrow:last-child i-input input,
+i-form .i-group div.i-formrow:last-child i-input input {
+    top: -2px;
+    border-radius: 0 0 4px 4px;
+}
+i-form.i-group i-input input:focus,
+i-form .i-group i-input input:focus {
+    z-index: 2;
+}
+i-form.i-group i-button,
+i-form.i-group i-select,
+i-form .i-group i-button,
+i-form .i-group i-select {
+    margin: 0.35em 0;
+}
+/* ======================================================== */
+
+
+
+/* ======================================================== */
+/* Stacked */
+i-form.i-stacked div.i-formrow {
+    display: block;
+}
 i-form.i-stacked [itag-formelement="true"]:not(i-button) {
     display: block;
     margin: 0.25em 0;
 }
+i-form.i-stacked i-label {
+    display: block;
+    margin: 1em 0 0.4em 0.15em;
+}
+i-form.i-stacked fieldset div.i-formrow:first-child i-label {
+    margin-top: 0;
+}
+i-form.i-stacked .i-group i-input,
+i-form.i-aligned .i-group i-input,
+i-form .i-stacked .i-group i-input,
+i-form .i-aligned .i-group i-input {
+    margin: 0;
+}
+/* ======================================================== */
 
-i-form.i-aligned [itag-formelement="true"] {
+
+
+/* ======================================================== */
+/* Aligned */
+i-form.i-aligned div.i-formrow {
+    display: block;
+}
+i-form.i-aligned i-label,
+i-form.i-aligned i-button,
+i-form.i-aligned [itag-formelement="true"]:not(i-button) {
     display: inline-block;
     *display: inline;
     *zoom: 1;
     vertical-align: middle;
 }
-
-/* Aligned Forms */
 i-form.i-aligned div.i-formrow {
-    margin-bottom: 0.5em;
+    margin-bottom: 1em;
+}
+i-form.i-aligned .i-group div.i-formrow,
+i-form .i-aligned .i-group div.i-formrow {
+    margin-bottom: 0;
 }
 i-form.i-aligned div.i-formrow:last-child {
     margin-bottom: 0;
 }
-i-form.i-aligned div.i-formrow i-label {
+i-form.i-aligned i-label {
     text-align: right;
     display: inline-block;
     vertical-align: middle;
     width: 10em;
     margin: 0 1em 0 0;
 }
-i-form.i-aligned .i-controls {
-    margin: 1.5em 0 0 10em;
+i-form.i-aligned i-textarea {
+    vertical-align: top;
 }
+i-form.i-aligned.i-group,
+i-form.i-aligned .i-group {
+    margin-bottom: 0.5em;
+}
+i-form.i-aligned.i-group i-label label,
+i-form.i-aligned .i-group i-label label {
+    text-align: right;
+}
+i-form.i-aligned fieldset i-button:first-child {
+    margin-left: 11em;
+}
+/* ======================================================== */
 
-/* Grouped Inputs */
-i-form div.i-formrow fieldset {
-    margin-bottom: 10px;
-}
-i-form div.i-formrow i-input {
-    display: block;
-    margin: 0;
-    border-radius: 0;
-    position: relative;
-    top: -1px;
-}
-i-form div.i-formrow i-input.focussed input,
-i-form div.i-formrow i-input input:focus {
-    z-index: 2;
-}
-i-form fieldset.i-group div.i-formrow:first-child i-input input {
-    top: 1px;
-    border-radius: 4px 4px 0 0;
-}
-i-form fieldset.i-group div.i-formrow:last-child i-input input {
-    top: -2px;
-    border-radius: 0 0 4px 4px;
-}
-i-form div.i-formrow i-button,
-i-form div.i-formrow i-select {
-    margin: 0.35em 0;
-}
 
+
+/* ======================================================== */
 /* Inline help for forms */
-/* NOTE: pure-help-inline is deprecated. Use i-form-message-inline instead. */
 i-form .message-inline {
     display: inline-block;
     padding-left: 0.3em;
@@ -133,31 +210,85 @@ i-form .message {
     color: #666;
     font-size: 0.875em;
 }
+/* ======================================================== */
+
+
 
 @media only screen and (max-width : 480px) {
-    i-form i-button:last-child {
-        margin: 0.7em 0 0;
-    }
-
-    i-form i-input,
-    i-form i-label {
-        margin-bottom: 0.3em;
+    i-form i-label,
+    i-form.i-aligned i-label {
         display: block;
-    }
-
-    i-form div.i-formrow i-input {
-        margin-bottom: 0;
-    }
-
-    i-form.i-aligned div.i-formrow i-label {
-        margin-bottom: 0.3em;
         text-align: left;
+        margin: 1em 0 0.4em 0.15em;
+    }
+
+    i-form fieldset div.i-formrow:first-child i-label,
+    i-form.i-aligned fieldset div.i-formrow:first-child i-label {
+        margin-top: 0;
+    }
+
+    i-form.i-group i-label,
+    i-form .i-group i-label {
+        opacity: 0 !important;
+        position: absolute !important;
+        left: -9999px !important;
+        top: -9999px !important;
+        z-index: -1;
+    }
+
+    i-form i-input {
+        display: block;
+        text-align: left;
+        margin-bottom: 0.3em;
+    }
+
+    i-form.i-group i-input,
+    i-form .i-group i-input {
+        margin-bottom: 0em;
+    }
+
+    i-form.i-aligned .control {
+        margin: 1.5em 0 0 0;
+    }
+
+    i-form i-button,
+    i-form i-select {
         display: block;
         width: 100%;
     }
 
-    i-form.i-aligned .i-controls {
-        margin: 1.5em 0 0 0;
+    i-form fieldset i-button {
+        margin-right: 0;
+        margin-top: 0;
+    }
+
+    i-form.i-aligned fieldset i-button:first-child {
+        margin-left: 0;
+    }
+
+    i-form i-button button,
+    i-form i-select >button,
+    i-form i-select >div >div {
+        width: 100%;
+    }
+
+    i-form i-select >button {
+        max-width: inherit;
+    }
+
+    i-form i-select > button div.btntext {
+        margin: 0;
+        max-width: inherit;
+        width: 100%;
+        text-align: center;
+    }
+
+    i-form i-select li {
+        text-align: center;
+    }
+
+    i-form i-button:last-child {
+        margin: 1em 0 0;
     }
 
     i-form .message-inline,

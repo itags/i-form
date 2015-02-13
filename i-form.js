@@ -1,22 +1,22 @@
 module.exports = function (window) {
     "use strict";
 
-    require('polyfill/polyfill-base.js');
     require('./css/i-form.css');
 
     var NAME = '[i-form]: ',
         itagName = 'i-form', // <-- define your own itag-name here
-        DOCUMENT = window.document,
         itagCore = require('itags.core')(window),
-        FocusManagerPlugin = require('focusmanager')(window),
+        DOCUMENT = window.document,
+        ITSA = window.ITSA,
+        FocusManagerPlugin = ITSA.Plugins.focusManager,
+        Event = ITSA.Event,
         DEFAULT_KEYUP = 'shift+9',
         DEFAULT_KEYDOWN = '9',
         DEFAULT_SELECTOR = '[itag-formelement]',
         DEFAULT_LOOP = true,
-        Event, Itag;
+        Itag;
 
     if (!window.ITAGS[itagName]) {
-        Event = require('event-mobile')(window);
 
         Event.before(itagName+':manualfocus', function(e) {
             // the i-select itself is unfocussable, but its button is
@@ -35,9 +35,36 @@ module.exports = function (window) {
             );
         });
 
+        Event.after('i-button:tap', function(e) {
+            var ibutton = e.target,
+                iform = ibutton.inside('i-form');
+            if (iform && !iform.model.disabled) {
+                iform.emitAction({
+                    button: ibutton,
+                    buttonType: e.buttonType
+                });
+            }
+        }, 'i-form');
+
+        Event.defineEvent('i-form:reset')
+             .defaultFn(function(e) {
+                 e.target.reset();
+             });
+
+        Event.after('i-button#reset:tap', function(e) {
+            var ibutton = e.target,
+                iform = ibutton.inside('i-form');
+            if (iform && !iform.model.disabled) {
+                iform.emit('reset', {
+                    button: ibutton
+                });
+            }
+        }, 'i-form');
+
         Itag = DOCUMENT.createItag(itagName, {
             attrs: {
-                'active-labels': 'boolean'
+                'active-labels': 'boolean', // to give labels functionality of focussing on itags
+                disabled: 'boolean'
             },
 
             init: function() {
@@ -45,6 +72,7 @@ module.exports = function (window) {
                     designNode = element.getDesignNode(),
                     allFormElements, children;
 
+                // now activate the focusmanager:
                 if (!element.isPlugged(FocusManagerPlugin)) {
                     element.plug(
                         FocusManagerPlugin,
@@ -105,6 +133,22 @@ module.exports = function (window) {
                 return DEFAULT_LOOP;
             },
 
+            emitAction: function(payload) {
+                /**
+                * Emitted when a the i-select changes its value
+                *
+                * @event i-form:action
+                * @param e {Object} eventobject including:
+                * @param e.target {HtmlElement} the i-select element
+                * @param e.prevValue {Number} the selected item, starting with 1
+                * @param e.newValue {Number} the selected item, starting with 1
+                * @param e.buttonText {String} the text that will appear on the button
+                * @param e.listText {String} the text as it is in the list
+                * @since 0.1
+                */
+                this.emit('action', payload);
+            },
+
             sync: function() {
                 var element = this,
                     databinders = element.databinders,
@@ -126,6 +170,13 @@ module.exports = function (window) {
                             console.warn(NAME+'Form-element waits for prop: '+property+', but this property is not bound. Will show the form, but not this element.');
                         }
                     }
+                });
+            },
+
+            reset: function() {
+                // will reset all form elements
+                this.getAll('[itag-formelement]').forEach(function(element) {
+                    element.reset && element.reset();
                 });
             },
 
