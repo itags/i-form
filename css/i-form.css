@@ -45,9 +45,11 @@ i-form[active-labels="true"] i-label {
 }
 
 i-form fieldset {
-    margin: 0;
-    padding: 0.5em 0 0.75em;
-    border: 0;
+    margin: 0 0 0.8em;
+    padding: 0.75em 0;
+    border: 1px solid #C0C0C0;
+    border-radius: 2px;
+    background-color: rgba(0, 0, 0, 0.03);
 }
 
 i-form fieldset i-button {
@@ -74,10 +76,6 @@ i-form div.i-formrow {
 
 /* ======================================================== */
 /* Grouped Inputs */
-i-form.i-group fieldset,
-i-form .i-group fieldset {
-    margin-bottom: 0.6em;
-}
 i-form.i-group:not(.i-aligned) i-label,
 i-form:not(.i-aligned) .i-group i-label {
     opacity: 0 !important;
@@ -106,6 +104,14 @@ i-form .i-group div.i-formrow:last-child i-input input {
     top: -2px;
     border-radius: 0 0 4px 4px;
 }
+i-form.i-group div.i-formrow:first-child i-label,
+i-form .i-group div.i-formrow:first-child i-label {
+    margin-top: 1px;
+}
+i-form.i-group div.i-formrow:last-child i-label,
+i-form .i-group div.i-formrow:last-child i-label {
+    margin-top: -1px; /* not -2px: that would disturb appearance too much */;
+}
 i-form.i-group i-input input:focus,
 i-form .i-group i-input input:focus {
     z-index: 2;
@@ -125,9 +131,17 @@ i-form .i-group i-select {
 i-form.i-stacked div.i-formrow {
     display: block;
 }
+i-form.i-stacked div.i-formrow.itag-noblock i-label {
+    display: inline-block;
+    margin-right: 1em;
+}
 i-form.i-stacked [itag-formelement="true"]:not(i-button) {
     display: block;
     margin: 0.25em 0;
+}
+i-form.i-stacked div.i-formrow.itag-noblock [itag-formelement="true"]:not(i-button) {
+    display: inline-block;
+    margin: 0;
 }
 i-form.i-stacked i-label {
     display: block;
@@ -181,7 +195,7 @@ i-form.i-aligned i-textarea {
 }
 i-form.i-aligned.i-group,
 i-form.i-aligned .i-group {
-    margin-bottom: 0.5em;
+    margin-bottom: 0.8em;
 }
 i-form.i-aligned.i-group i-label label,
 i-form.i-aligned .i-group i-label label {
@@ -219,12 +233,29 @@ i-form .message {
     i-form.i-aligned i-label {
         display: block;
         text-align: left;
-        margin: 1em 0 0.4em 0.15em;
+        margin: 1em 0 0.4em 3px; /* 3px as lect-padding --> needs to fit .itag-noblock labels  */
     }
 
     i-form fieldset div.i-formrow:first-child i-label,
     i-form.i-aligned fieldset div.i-formrow:first-child i-label {
         margin-top: 0;
+    }
+
+    i-form.i-aligned div.i-formrow.itag-noblock i-label {
+        display: inline-block;
+        width: 100%;
+        padding-left: 85px;  /* 82 + 3 extra pixels  */
+        margin-left: -82px;
+        margin-bottom: 0;
+    }
+
+    i-form.i-aligned div.i-formrow.itag-noblock i-checkbox {
+        margin-right: 12px;
+        width: 70px !important;
+    }
+
+    i-form.i-aligned div.i-formrow.itag-noblock {
+        text-align: right;
     }
 
     i-form.i-group i-label,

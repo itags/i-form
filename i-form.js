@@ -55,6 +55,15 @@ module.exports = function (window) {
             var ibutton = e.target,
                 iform = ibutton.inside('i-form');
             if (iform && !iform.model.disabled) {
+                /**
+                * Emitted when a the i-select changes its value
+                *
+                * @event i-form:reset
+                * @param e {Object} eventobject including:
+                * @param e.target {HtmlElement} the i-form element
+                * @param e.button {HTMLElement} the i-button#reset that caused the reset
+                * @since 0.1
+                */
                 iform.emit('reset', {
                     button: ibutton
                 });
@@ -139,11 +148,9 @@ module.exports = function (window) {
                 *
                 * @event i-form:action
                 * @param e {Object} eventobject including:
-                * @param e.target {HtmlElement} the i-select element
-                * @param e.prevValue {Number} the selected item, starting with 1
-                * @param e.newValue {Number} the selected item, starting with 1
-                * @param e.buttonText {String} the text that will appear on the button
-                * @param e.listText {String} the text as it is in the list
+                * @param e.target {HtmlElement} the i-form element
+                * @param e.button {HtmlElement} the i-button that was pressed
+                * @param e.buttonType {String}
                 * @since 0.1
                 */
                 this.emit('action', payload);
