@@ -34,9 +34,6 @@ i-form:not(.itag-rendered) {
 
 i-form {
     margin: 0;
-    display: inline-block;
-    *display: inline; /*IE 6/7*/
-    zoom: 1;
     padding: 0.25em 0.5em;
 }
 
@@ -50,6 +47,8 @@ i-form fieldset {
     border: 1px solid #C0C0C0;
     border-radius: 2px;
     background-color: rgba(0, 0, 0, 0.03);
+    width: 100%;
+    display: block;
 }
 
 i-form fieldset i-button {
@@ -70,8 +69,6 @@ i-form div.i-formrow {
     margin: 0;
     padding: 0;
     display: inline-block;
-    *display: inline; /*IE 6/7*/
-    zoom: 1;
 }
 
 /* ======================================================== */
@@ -229,6 +226,11 @@ i-form .message {
 
 
 @media only screen and (max-width : 480px) {
+    i-form {
+        display: block;
+        width: 100%;
+    }
+
     i-form i-label,
     i-form.i-aligned i-label {
         display: block;
