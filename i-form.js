@@ -77,9 +77,7 @@ module.exports = function (window) {
             },
 
             init: function() {
-                var element = this,
-                    designNode = element.getDesignNode(),
-                    allFormElements, children;
+                var element = this;
 
                 // now activate the focusmanager:
                 if (!element.isPlugged(FocusManagerPlugin)) {
@@ -93,6 +91,13 @@ module.exports = function (window) {
                     );
                 }
                 element.databinders = [];
+            },
+
+            render: function() {
+                var element = this,
+                    designNode = element.getDesignNode(),
+                    allFormElements, children;
+
                 // we must add a classname to the i-form and remove it when all
                 // i-form-elements are ready. This we need to prevent the i-form-elements
                 // to show some initial value before they are bounded
