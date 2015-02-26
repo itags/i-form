@@ -35,6 +35,7 @@ i-form:not(.itag-rendered) {
 i-form {
     margin: 0;
     padding: 0.25em 0.5em;
+    display: block;
 }
 
 i-form[active-labels="true"] i-label {

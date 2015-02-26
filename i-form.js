@@ -86,7 +86,8 @@ module.exports = function (window) {
                         {
                             'keyup': String(element.defFmKeyup()),
                             'keydown': String(element.defFmKeydown()),
-                            'noloop': String(!element.defFmLoop())
+                            'noloop': String(!element.defFmLoop()),
+                            'manage': String(element.getFocusManagerSelector())
                         }
                     );
                 }
@@ -104,7 +105,7 @@ module.exports = function (window) {
                 // now we add all i-form-elements that need to wait for bounded data to a hash
 
                 // fully set the designNode's content into the i-form:
-                element.setHTML(designNode.getHTML());
+                element.setHTML(designNode.getHTML(null, true));
                 allFormElements = element.getAll('[i-prop], i-label');
                 if (allFormElements.length>0) {
                     element.setClass('hide-children');
@@ -123,12 +124,13 @@ module.exports = function (window) {
                         }
                     );
                 }
+                ITSA.async(function() {
+                    element.bind();
+                });
             },
 
             getFocusManagerSelector: function() {
-                var selector = this.getAttr('fm-manage');
-                (selector.toLowerCase()==='true') && (selector=DEFAULT_SELECTOR);
-                return selector;
+                return DEFAULT_SELECTOR;
             },
 
             defFmSelector: function() {
@@ -161,20 +163,23 @@ module.exports = function (window) {
                 this.emit('action', payload);
             },
 
-            sync: function() {
+            _afterBindModel: function() {
+                this.unbind();
+                this.bind();
+            },
+
+            bind: function() {
                 var element = this,
                     databinders = element.databinders,
                     model = element.model,
                     allFormElements, propertyModel;
-                element.setAttr('fm-manage', element.defFmSelector(), true);
-                element.unbind();
                 allFormElements = element.getAll('[i-prop]');
                 allFormElements.forEach(function(formElement) {
                     var property = formElement.getAttr('i-prop');
                     if (property) {
                         propertyModel = model[property];
                         if (propertyModel) {
-                            databinders[databinders.length] = formElement.bindModel(propertyModel);
+                            databinders[databinders.length] = formElement.bindModel(propertyModel, true);
                         }
                         else {
                             // fulfill the promise from the hash, to make the hash completely fulfilled and the i-form to show:
