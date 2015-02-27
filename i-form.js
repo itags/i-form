@@ -96,7 +96,7 @@ module.exports = function (window) {
 
             render: function() {
                 var element = this,
-                    designNode = element.getDesignNode(),
+                    designNode = element.getItagContainer(),
                     allFormElements, children;
 
                 // we must add a classname to the i-form and remove it when all
