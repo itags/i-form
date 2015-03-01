@@ -8,7 +8,6 @@ module.exports = function (window) {
         itagCore = require('itags.core')(window),
         DOCUMENT = window.document,
         ITSA = window.ITSA,
-        FocusManagerPlugin = ITSA.Plugins.focusManager,
         Event = ITSA.Event,
         DEFAULT_KEYUP = 'shift+9',
         DEFAULT_KEYDOWN = '9',
@@ -80,16 +79,13 @@ module.exports = function (window) {
                 var element = this;
 
                 // now activate the focusmanager:
-                if (!element.isPlugged(FocusManagerPlugin)) {
-                    element.plug(
-                        FocusManagerPlugin,
-                        {
-                            'keyup': String(element.defFmKeyup()),
-                            'keydown': String(element.defFmKeydown()),
-                            'noloop': String(!element.defFmLoop()),
-                            'manage': String(element.getFocusManagerSelector())
-                        }
-                    );
+                if (!element.isPlugged('fm')) {
+                    element.plug('fm', {
+                        'keyup': String(element.defFmKeyup()),
+                        'keydown': String(element.defFmKeydown()),
+                        'noloop': String(!element.defFmLoop()),
+                        'manage': String(element.getFocusManagerSelector())
+                    });
                 }
                 element.databinders = [];
             },
