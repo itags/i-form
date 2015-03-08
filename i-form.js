@@ -69,7 +69,7 @@ module.exports = function (window) {
             }
         }, 'i-form');
 
-        Itag = DOCUMENT.createItag(itagName, {
+        Itag = DOCUMENT.defineItag(itagName, {
             attrs: {
                 'active-labels': 'boolean', // to give labels functionality of focussing on itags
                 disabled: 'boolean'
