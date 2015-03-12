@@ -83,6 +83,8 @@ module.exports = function (window) {
                     element.plug('fm', {
                         'keyup': String(element.defFmKeyup()),
                         'keydown': String(element.defFmKeydown()),
+                        'keyenter': null,
+                        'keyleave': '27',
                         'noloop': String(!element.defFmLoop()),
                         'manage': String(element.getFocusManagerSelector())
                     });
