@@ -11,33 +11,35 @@ module.exports = function (window) {
         Event = ITSA.Event,
         DEFAULT_KEYUP = 'shift+9',
         DEFAULT_KEYDOWN = '9',
+        DEFAULT_KEYENTER = '39',
+        DEFAULT_KEYLEAVE = '27',
         DEFAULT_SELECTOR = '[itag-formelement]',
         DEFAULT_LOOP = true,
         Itag;
 
     if (!window.ITAGS[itagName]) {
 
-        Event.before(itagName+':manualfocus', function(e) {
-            // the i-select itself is unfocussable, but its button is
-            // we need to patch `manualfocus`,
-            // which is emitted on node.focus()
-            // a focus by userinteraction will always appear on the button itself
-            // so we don't bother that
-            var element = e.target;
-            e.preventDefault();
-            element.itagReady().then(
-                function() {
-                    var selector = element.getFocusManagerSelector(),
-                        focusNode = element.getElement(selector);
-                    focusNode && focusNode.focus();
-                }
-            );
-        });
+        // Event.before(itagName+':manualfocus', function(e) {
+        //     // the i-select itself is unfocussable, but its button is
+        //     // we need to patch `manualfocus`,
+        //     // which is emitted on node.focus()
+        //     // a focus by userinteraction will always appear on the button itself
+        //     // so we don't bother that
+        //     var element = e.target;
+        //     e.preventDefault();
+        //     element.itagReady().then(
+        //         function() {
+        //             var selector = element.getFocusManagerSelector(),
+        //                 focusNode = element.getElement(selector);
+        //             focusNode && focusNode.focus();
+        //         }
+        //     );
+        // });
 
         Event.after('i-button:tap', function(e) {
             var ibutton = e.target,
                 iform = ibutton.inside('i-form');
-            if (iform && !iform.model.disabled) {
+            if (iform && !iform.model.disabled && !iform.invalid(true)) {
                 iform.emitAction({
                     button: ibutton,
                     buttonType: e.buttonType
@@ -77,18 +79,15 @@ module.exports = function (window) {
 
             init: function() {
                 var element = this;
-
                 // now activate the focusmanager:
-                if (!element.isPlugged('fm')) {
-                    element.plug('fm', {
-                        'keyup': String(element.defFmKeyup()),
-                        'keydown': String(element.defFmKeydown()),
-                        'keyenter': null,
-                        'keyleave': '27',
-                        'noloop': String(!element.defFmLoop()),
-                        'manage': String(element.getFocusManagerSelector())
-                    });
-                }
+                element.plug('fm', {
+                    keyup: element.getAttr('fm-keyup') || element.defFmKeyup(),
+                    keydown: element.getAttr('fm-keydown') || element.defFmKeydown(),
+                    keyenter: element.getAttr('fm-keyenter') || element.defFmKeyenter(),
+                    keyleave: element.getAttr('fm-keyleave') || element.defFmKeyleave(),
+                    noloop: element.getAttr('fm-noloop') || element.defFmLoop(),
+                    manage: element.getAttr('fm-manage') || element.defFmSelector(),
+                });
                 element.databinders = [];
             },
 
@@ -127,10 +126,6 @@ module.exports = function (window) {
                 });
             },
 
-            getFocusManagerSelector: function() {
-                return DEFAULT_SELECTOR;
-            },
-
             defFmSelector: function() {
                 return DEFAULT_SELECTOR;
             },
@@ -143,13 +138,22 @@ module.exports = function (window) {
                 return DEFAULT_KEYDOWN;
             },
 
+            defFmKeyenter: function() {
+                return DEFAULT_KEYENTER;
+            },
+
+            defFmKeyleave: function() {
+                return DEFAULT_KEYLEAVE;
+            },
+
             defFmLoop: function() {
                 return DEFAULT_LOOP;
             },
 
             emitAction: function(payload) {
                 /**
-                * Emitted when a the i-select changes its value
+                * Emitted when an i-button is pressed inside the i-form
+                * and the i-form is not disabled and validated.
                 *
                 * @event i-form:action
                 * @param e {Object} eventobject including:
@@ -200,6 +204,17 @@ module.exports = function (window) {
                 this.getAll('[itag-formelement]').forEach(function(element) {
                     element.reset && element.reset();
                 });
+            },
+
+            invalid: function(focus) {
+                // will reset all form elements
+                var childElement;
+                this.getAll('[itag-formelement]').some(function(element) {
+                    element.invalid && element.invalid() && (childElement=element);
+                    return childElement;
+                });
+                focus && childElement && childElement.focus();
+                return childElement;
             },
 
             unbind: function() {
