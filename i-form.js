@@ -109,7 +109,7 @@ module.exports = function (window) {
                     children = [];
                     allFormElements.forEach(function(formElement) {
                         // first tell the element it needs to wait for data:
-                        formElement.hasAttribute('i-prop') && formElement.setAttr('bound-model', 'true');
+                        formElement.hasAttribute('i-prop') && formElement.setAttr('lazybind', 'true');
                         // now add the readypromise to the hash:
                         formElement._showItagPromise = window.Promise.manage();
                         children[children.length] = formElement._showItagPromise;
