@@ -19,22 +19,15 @@ module.exports = function (window) {
 
     if (!window.ITAGS[itagName]) {
 
-        // Event.before(itagName+':manualfocus', function(e) {
-        //     // the i-select itself is unfocussable, but its button is
-        //     // we need to patch `manualfocus`,
-        //     // which is emitted on node.focus()
-        //     // a focus by userinteraction will always appear on the button itself
-        //     // so we don't bother that
-        //     var element = e.target;
-        //     e.preventDefault();
-        //     element.itagReady().then(
-        //         function() {
-        //             var selector = element.getFocusManagerSelector(),
-        //                 focusNode = element.getElement(selector);
-        //             focusNode && focusNode.focus();
-        //         }
-        //     );
-        // });
+        Event.before(itagName+':manualfocus', function(e) {
+            var element = e.target;
+            e.preventDefault();
+            element.itagReady().then(
+                function() {
+                    element.focus();
+                }
+            );
+        });
 
         Event.after('i-button:tap', function(e) {
             var ibutton = e.target,
@@ -79,6 +72,7 @@ module.exports = function (window) {
 
             init: function() {
                 var element = this;
+                element._waitBeforeReady = window.Promise.manage();
                 // now activate the focusmanager:
                 element.plug('fm', {
                     keyup: element.getAttr('fm-keyup') || element.defFmKeyup(),
@@ -94,7 +88,8 @@ module.exports = function (window) {
             render: function() {
                 var element = this,
                     designNode = element.getItagContainer(),
-                    allFormElements, children;
+                    allFormElements = [],
+                    children, i, len, allElements, itagElement;
 
                 // we must add a classname to the i-form and remove it when all
                 // i-form-elements are ready. This we need to prevent the i-form-elements
@@ -103,7 +98,12 @@ module.exports = function (window) {
 
                 // fully set the designNode's content into the i-form:
                 element.setHTML(designNode.getHTML(null, true));
-                allFormElements = element.getAll('[i-prop], i-label');
+                allElements = element.getAll('*');
+                len = allElements.length;
+                for (i=0; i<len; i++) {
+                    itagElement = allElements[i];
+                    itagElement.isItag() && (allFormElements[allFormElements.length]=itagElement);
+                }
                 if (allFormElements.length>0) {
                     element.setClass('hide-children');
                     children = [];
@@ -113,17 +113,24 @@ module.exports = function (window) {
                         // now add the readypromise to the hash:
                         formElement._showItagPromise = window.Promise.manage();
                         children[children.length] = formElement._showItagPromise;
-                        formElement.itagReady().then(formElement._showItagPromise.fulfill());
+                        formElement.itagReady().finally(formElement._showItagPromise.fulfill);
                     });
                     window.Promise.finishAll(children).then(
                         function() {
                             element.removeClass('hide-children');
+                            element._waitBeforeReady.fulfill();
                         }
                     );
                 }
                 ITSA.async(function() {
                     element.bind();
                 });
+            },
+
+            itagReady: function() {
+                var element = this;
+                element._itagReady || (element._itagReady=window.Promise.manage());
+                return element._itagReady.then(element._waitBeforeReady);
             },
 
             defFmSelector: function() {
@@ -197,6 +204,19 @@ module.exports = function (window) {
                 this.getAll('[itag-formelement]').forEach(function(element) {
                     element.currentToReset && element.currentToReset();
                 });
+            },
+
+            getValues: function() {
+                // will read the current form-values and return them as an object
+                var response = {},
+                    property;
+                this.getAll('[itag-formelement]').forEach(function(element) {
+                    if (element.getValue) {
+                        property = element.getAttr('i-prop') || element.getAttr('name') || ITSA.idGenerator('undefined');
+                        response[property] = element.getValue();
+                    }
+                });
+                return response;
             },
 
             reset: function() {
