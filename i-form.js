@@ -187,7 +187,13 @@ module.exports = function (window) {
                     var property = formElement.getAttr('i-prop');
                     if (property) {
                         propertyModel = model[property];
-                        if (propertyModel) {
+                        if (propertyModel!==undefined) {
+                            // in case the property consists of a 'non'-object,
+                            // than it has to be the `value` of the model that should be passed through.
+                            if (!Object.isObject(propertyModel)) {
+                                propertyModel = {};
+                                propertyModel[formElement.valueProperty] = model[property];
+                            }
                             databinders[databinders.length] = formElement.bindModel(propertyModel, true);
                         }
                         else {
